@@ -1,106 +1,74 @@
-<h1>
-  Course #<%= course.id %> details
-</h1>
+<h1>Course #<%= @course.id %> details</h1>
 
 <div>
-  <a href="/courses">
-    Go back
-  </a>
+  <a href="/courses">Go back</a>
 </div>
 
 <div>
-  <a href="/delete_course/<%= @course.id %>">
-    Delete course
-  </a>
+  <a href="/delete_course/<%= @course.id %>">Delete course</a>
 </div>
 
 <hr>
 
 <form action="/modify_course/<%= @course.id %>" method="post">
   <div>
-    <label for="title_box">
-      Title
-    </label>
-
-    <input type="text" id="title_box" name="query_title">
+    <label for="title_box">Title</label>
+    <input type="text" id="title_box" name="query_title" value="<%= @course.title %>">
   </div>
 
   <div>
-    <label for="term_offered_box">
-      Term offered
-    </label>
-
+    <label for="term_offered_box">Term offered</label>
     <input type="text" id="term_offered_box" name="query_term_offered" value="<%= @course.term_offered %>">
   </div>
 
   <div>
-    <label for="department_id_box">
-      Department
-    </label>
-
+    <label for="department_id_box">Department</label>
     <select id="department_id_box" name="query_department_id">
-      <% Department.order({ :name => :asc }).each do |a_department| %>
+      <% Department.order(name: :asc).each do |a_department| %>
         <% if a_department.id == @course.department_id %>
-          <option value="<%= a_department.id %>" selected>
-            <%= a_department.name %>
-          </option>
+          <option value="<%= a_department.id %>" selected><%= a_department.name %></option>
         <% else %>
-          <option value="<%= a_department.id %>">
-            <%= a_department.name %>
-          </option>
+          <option value="<%= a_department.id %>"><%= a_department.name %></option>
         <% end %>
       <% end %>
     </select>
   </div>
 
-  <button>
-    Update course
-  </button>
+  <button>Update course</button>
 </form>
 
 <hr>
 
 <dl>
-  <dt>
-    Title
-  </dt>
+  <dt>Title</dt>
+  <dd><%= @course.title %></dd>
+
+  <dt>Term offered</dt>
+  <dd><%= @course.term_offered %></dd>
+
+  <dt>Department</dt>
   <dd>
-    <%= course.title %>
+    <% department = Department.find_by(id: @course.department_id) %>
+    <% if department %>
+      <a href="/departments/<%= department.id %>"><%= department.name %></a>
+    <% else %>
+      N/A
+    <% end %>
   </dd>
 
-  <dt>
-    Term offered
-  </dt>
-  <dd>
-    <%= @course.term_offered %>
-  </dd>
-
-  <dt>
-    Department
-  </dt>
-  <dd>
-    <% department = Department.where({ :id => @course.department_id }).at(0) %>
-    <a href="/departments/<%= department.id %>"><%= department.name %></a>
-  </dd>
-
-  <dt>
-    Number of enrolled students
-  </dt>
-  <dd>
-    <%= enrollment.where({ :course_id => @course.id }) %>
-  </dd>
+  <dt>Number of enrolled students</dt>
+  <dd><%= Enrollment.where(course_id: @course.id).count %></dd>
 </dl>
 
 <hr>
 
 <h2>Roster</h2>
 <ul>
-  <% Enrollment.where({ :course_id => @course.id }).each do |enrollment| %>
-    <% student = Student.where({ :id => enrollment.student_id }).at(0) %>
-    <li>
-      <a href="/students/<%= student.id %>">
-        <%= student.first_name %> <%= student.last_name %>
-      </a>
-    </li>
+  <% enrollments = Enrollment.where(course_id: @course.id) %>
+  <% enrollments.each do |enrollment| %>
+    <% student = Student.where(id: enrollment.student_id).first %>
+    <% if student %>
+      <li><a href="/students/<%= student.id %>"><%= student.first_name %> <%= student.last_name %></a></li>
+    <% end %>
   <% end %>
 </ul>

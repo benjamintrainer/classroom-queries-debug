@@ -1,54 +1,30 @@
-<h1>
-  List of all departments
-</h1>
+<h1>List of all departments</h1>
 
 <hr>
 
 <form action="/insert_department" method="post">
   <div>
-    <label for="name_box">
-      Name
-    </label>
-
+    <label for="name_box">Name</label>
     <input type="text" id="name_box" name="query_name">
   </div>
 
-  <button>
-    Create department
-  </button>
+  <button>Create department</button>
 </form>
 
 <hr>
 
 <table class="table" border="1">
   <tr>
-    <th>
-      ID
-    </th>
-
-    <th>
-      Name
-    </th>
-
-    <th>
-    </th>
+    <th>ID</th>
+    <th>Name</th>
+    <th></th>
   </tr>
 
   <% @departments.each do |department| %>
     <tr>
-      <td>
-        <%= @department.id %>
-      </td>
-
-      <td>
-        <%= @department.name %>
-      </td>
-
-      <td>
-        <a href="/departments/<%= @department.id %>">
-          Show details
-        </a>
-      </td>
+      <td><%= department.id %></td>
+      <td><%= department.name %></td>  
+      <td><a href="/departments/<%= department.id %>">Show details</a></td>
     </tr>
   <% end %>
 </table>

@@ -1,93 +1,57 @@
-<h1>
-  List of all courses
-</h1>
+<h1>List of all courses</h1>
 
 <hr>
 
 <form action="/insert_course" method="post">
   <div>
-    <label for="title_box">
-      Title
-    </label>
-
-    <input type="text" id="title_b" name="q_title">
+    <label for="title_box">Title</label>
+    <input type="text" id="title_box" name="query_title">
   </div>
 
   <div>
-    <label for="term_offered_box">
-      Term offered
-    </label>
-
+    <label for="term_offered_box">Term offered</label>
     <input type="text" id="term_offered_box" name="query_term">
   </div>
 
   <div>
-    <label for="department_id_box">
-      Department
-    </label>
+    <label for="department_id_box">Department</label>
+  <select id="department_id_box" name="query_department_id">
+    <option value="">Select a department</option>
+    <% Department.order(name: :asc).each do |a_department| %>
+      <option value="<%= a_department.id %>"><%= a_department.name %></option>
+    <% end %>
+</select>
 
-    <select id="department_id_box" name="query_department_id">
-      <% Department.order({ :name => :asc }).each do |a_department| %>
-        <option value="<%= a_department.id %>">
-          <%= a_department.name %>
-        </option>
-      <% end %>
-    </select>
   </div>
 
-  <button>
-    Create course
-  </button>
+  <button>Create course</button>
 </form>
 
 <hr>
 
 <table class="table" border="1">
   <tr>
-    <th>
-      ID
-    </th>
-
-    <th>
-      Title
-    </th>
-
-    <th>
-      Term offered
-    </th>
-
-    <th>
-      Department
-    </th>
-
-    <th>
-    </th>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Term offered</th>
+    <th>Department</th>
+    <th></th>
   </tr>
 
-  <% @course.each do |course| %>
+  <% @courses.each do |course| %>
     <tr>
+      <td><%= course.id %></td>
+      <td><%= course.title %></td>
+      <td><%= course.term_offered %></td>
       <td>
-        <%= course.id %>
+        <% department = Department.find_by(id: course.department_id) %>
+        <% if department %>
+          <a href="/departments/<%= department.id %>"><%= department.name %></a>
+        <% else %>
+          N/A
+        <% end %>
       </td>
-
-      <td>
-        <%= course.title %>
-      </td>
-
-      <td>
-        <%= course.term_offered %>
-      </td>
-
-      <td>
-        <% department = department.where({ :id => course.department_id }).at(0) %>
-        <a href="/departments/<%= department.id %>"><%= department.name %></a>
-      </td>
-
-      <td>
-        <a href="/courses/<%= @course.id %>">
-          Show details
-        </a>
-      </td>
+      <td><a href="/courses/<%= course.id %>">Show details</a></td>
     </tr>
   <% end %>
 </table>
